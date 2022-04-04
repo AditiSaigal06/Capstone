@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: upg-loadme
+  labels:
+    app: upg-loadme
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: upg-loadme
+  template:
+    metadata:
+      labels:
+        app: upg-loadme
+    spec:
+      containers:
+      - name: upg-loadme
+        image: 854390731207.dkr.ecr.us-east-1.amazonaws.com/major:latest
+        ports:
+        - containerPort: 8081
+        env:
+          - name: upg-loadme
+            value: upg-loadme
+      tolerations:
+      - key: special
+        value: "true"
+        effect: "NoSchedule"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: upg-loadme-service
+spec:
+  type: NodePort
+  selector:
+    app: upg-loadme
+  ports:
+    - port: 8081
+      targetPort: 8081
+

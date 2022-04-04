@@ -1,0 +1,61 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: upg-loadme
+  namespace: demo
+  labels:
+    app: upg-loadme
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: upg-loadme
+  template:
+    metadata:
+      namespace: demo
+      labels:
+        app: upg-loadme
+    spec:
+      containers:
+      - name: upg-loadme
+        image: 854390731207.dkr.ecr.us-east-1.amazonaws.com/major:latest
+        resources:
+          requests:
+            cpu: 800m
+            memory: 400Mi
+          limits:
+            cpu: 1000m
+            memory: 400Mi
+        imagePullPolicy: Always
+        restartPolicy: Always
+        terminationGracePeriodSeconds: 10  
+        # dnsPolicy: ClusterFirst
+        ports:
+        - containerPort: 8081
+        env:
+          - name: upg-loadme
+            value: upg-loadme
+        tolerations:
+        - key: special
+          value: "true"
+          operator: "Exists"
+          effect: "NoSchedule"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: demo
+  name: upg-loadme
+spec:
+  type: NodePort
+  selector:
+    app: upg-loadme
+  ports:
+    - name: upg-loadme
+      protocol: TCP
+      port: 80
+      targetPort: 8081
+
+...

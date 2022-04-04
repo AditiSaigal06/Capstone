@@ -1,0 +1,3 @@
+resources:
+  - upgloadme-deployment.yaml
+  - ingress.yaml
